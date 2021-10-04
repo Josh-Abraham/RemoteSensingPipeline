@@ -37,7 +37,11 @@ def fetch_images():
 
 def run_pipeline(image):
     global preprocess_order
+    image2 = image
     for elem in preprocess_order:
-        print(getattr(pipeline, elem)())
+        image2 = getattr(pipeline, elem)(image2)
 
+    cv2.imshow("1", image)
+    cv2.imshow("2", image2)
+    cv2.waitKey(0)
 fetch_images()
