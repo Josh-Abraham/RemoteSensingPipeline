@@ -11,28 +11,30 @@ PIPELINE_ORDER = {
 # Args
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--path", type=str, default="Images/*.jpg", help="Image folder path")
-ap.add_argument("-s", "--scale", type=float, default=1, help="Image folder path")
+ap.add_argument("-s", "--scale", type=bool, default=True, help="Resize Images")
 ap.add_argument("-o", "--order", type=int, default=1, help="Pipeline Preprocessing Order")
 
 args = vars(ap.parse_args())
 path = args["path"]
-scale_factor = args["scale"]
+scale = args["scale"]
 preprocess_order = PIPELINE_ORDER[args["order"]]
 
 def load_image(location):
-    global scale_factor
+    global scale
     image = cv2.imread(location)
     (H, W) = image.shape[:2]
-    width = int(W * scale_factor)
-    height = int(H * scale_factor)
-    dim = (width, height)
-    image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)	
-    return [image, dim]
+    if scale:
+        scale_factor = 250 / W
+        width = int(W * scale_factor)
+        height = int(H * scale_factor)
+        dim = (width, height)
+        image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)	
+    return image
 
 def fetch_images():
     global path
     for filename in glob.glob(path): #assuming jpg
-        image, dim = load_image(filename)
+        image = load_image(filename)
         run_pipeline(image)
 
 def run_pipeline(image):

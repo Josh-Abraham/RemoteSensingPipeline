@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from ISR.models import RDN, RRDN
+
 
 class pipeline:
     def white_balancing(image):
@@ -13,4 +15,6 @@ class pipeline:
         return image
 
     def super_res(image):
+        model = RDN(weights='noise-cancel')
+        sr_img = model.predict(np.array(image))
         return image
