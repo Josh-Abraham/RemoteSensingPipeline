@@ -4,7 +4,7 @@ import glob
 from pipeline import pipeline
 
 PIPELINE_ORDER = {
-    1: ["white_balancing", "super_res"],
+    1: ["white_balancing", "super_res", "deshadow", "anisotropic"],
     2: ["super_res", "white_balancing"]
 }
 
@@ -50,3 +50,7 @@ def show_image(orig_image, preprocess_image):
     cv2.waitKey(0)
 
 fetch_images()
+
+# Shadows
+# https://github.com/vinthony/ghost-free-shadow-removal
+# https://paperswithcode.com/task/shadow-removal
