@@ -4,7 +4,7 @@ import glob
 from pipeline import pipeline
 
 PIPELINE_ORDER = {
-    1: ["white_balancing", "super_res", "deshadow", "anisotropic"],
+    1: ["white_balancing", "local_contrast", "super_res", "deshadow", "anisotropic"],
     2: ["super_res", "white_balancing"]
 }
 
@@ -24,7 +24,7 @@ def load_image(location):
     image = cv2.imread(location)
     (H, W) = image.shape[:2]
     if scale:
-        scale_factor = 250 / W
+        scale_factor = 350 / W
         width = int(W * scale_factor)
         height = int(H * scale_factor)
         dim = (width, height)

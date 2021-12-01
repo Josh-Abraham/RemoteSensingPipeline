@@ -3,6 +3,7 @@ import numpy as np
 from ISR.models import RDN, RRDN
 from medpy.filter.smoothing import anisotropic_diffusion
 from deshadower import *
+from skimage import exposure
 
 test_w,test_h = 640,480 
 shadow_model = './Models/srdplus-pretrained'
@@ -15,6 +16,7 @@ isr_model = RDN(weights='noise-cancel')
 class pipeline:
 
     def white_balancing(image):
+        # Grey world assumption
         image = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
         avg_a = np.mean(image[:, :, 1])
         avg_b = np.mean(image[:, :, 2])
@@ -33,9 +35,12 @@ class pipeline:
         return ani_image.astype('uint8')
 
     def deshadow(image):
-        test_w = int(image.shape[1]* test_h/float(image.shape[0]))
-        if test_w >0 and test_h > 0:
-            image = cv2.resize( np.float32(image), (test_w, test_h), cv2.INTER_CUBIC)
         image = image/255.0  
         image_no_shadow = deshadower.run(image)
         return image_no_shadow
+
+    def local_contrast(image):
+        contrast_image = exposure.equalize_adapthist(image)
+        norm_image = cv2.normalize(contrast_image, None, alpha = 0, beta = 255, norm_type = cv2.NORM_MINMAX, dtype = cv2.CV_32F)
+        norm_image = norm_image.astype(np.uint8)
+        return norm_image  
